@@ -59,21 +59,21 @@ events.on(`card:select`, (product: IProduct) => {
 		{
 			onClick: () => {
 				events.emit(`basket:toggleItem`, product);
-				// cardPreview.setButtonText(appModel.isInBasket(product.id));
+				cardPreview.setButtonText(appModel.isInBasket(product.id));
 			}
-		}
+		}, appModel.isInBasket(product.id)
 	);
 	// cardPreview.setButtonText(appModel.isInBasket(product.id));
 	modal.render({content: cardPreview.render(product)});
 });
 
 events.on(`basket:toggleItem`, (product: IProduct) => {
-	// if (!appModel.isInBasket(product.id)) {
-	// 	appModel.addItemToBasket(product);
-	// } else {
-	// 	events.emit(`basket:deleteItem`, product)
-	// }
-	appModel.addItemToBasket(product);
+	if (!appModel.isInBasket(product.id)) {
+		appModel.addItemToBasket(product);
+	} else {
+		events.emit(`basket:deleteItem`, product)
+	}
+	// appModel.addItemToBasket(product);
 	page.counter = appModel.getBasket().length;
 });
 
@@ -91,15 +91,11 @@ events.on(`basket:deleteItem`, (product: IProduct) => {
 
 events.on(`basket:changed`, () => {
 	const items = appModel.getBasket().map((card, index) => {
-		const itemInBasket = new Card(
-			`card`,
-			cloneTemplate(cardBasketTemplate),
-			{
-				onClick: () => {
-					events.emit(`basket:deleteItem`, card);
-				}
+		const itemInBasket = new Card(`card`, cloneTemplate(cardBasketTemplate), {
+			onClick: () => {
+				events.emit(`basket:deleteItem`, card);
 			}
-		);
+		}, false, true);
 		return itemInBasket.render({
 			title: card.title,
 			price: card.price,

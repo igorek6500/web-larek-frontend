@@ -9,7 +9,7 @@ interface ICardActions {
 export class Card extends BaseComponent<IProduct> {
 	protected _deleteButton?: HTMLButtonElement;
 
-	constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
+	constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions, inBasket?: boolean, forBasket?: boolean) {
 		super(container);
 
 		this._category = this.container.querySelector('.card__category');
@@ -31,6 +31,8 @@ export class Card extends BaseComponent<IProduct> {
 			const buttonToClick = this._button || container;
 			buttonToClick.addEventListener('click', actions.onClick);
 		}
+
+		if (!forBasket) this.setButtonText(inBasket);
 	}
 
 	protected _id?: string;
@@ -119,7 +121,8 @@ export class Card extends BaseComponent<IProduct> {
 
 	setButtonText(value: boolean) {
 		if (value) {
-			this.button = `Убрать из корзины`;
+			this.button = `Добавлено в корзину`;
+			this.setDisabled(this._button, value);
 		} else this.button = `В корзину`;
 	}
 }
